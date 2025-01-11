@@ -1,0 +1,7 @@
+{
+  "name": "gob-konek",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}
