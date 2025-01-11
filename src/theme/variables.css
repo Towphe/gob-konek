@@ -1,3 +1,26 @@
 /* For information on how to create your own theme, please see:
 http://ionicframework.com/docs/theming/ */
-@media (prefers-color-scheme: primary);
+/* Light mode */
+:root {
+    --ion-background-color: #f2f2f2;
+    --ion-text-color: #333333;
+    /* Add more light mode variables as needed */
+}
+
+/* Dark mode */
+[data-theme="dark"] {
+    --ion-background-color: #333333;
+    --ion-text-color: #f2f2f2;
+    /* Add more dark mode variables as needed */
+}
+
+.toggle-small {
+    zoom: 0.6;
+}
+
+ion-header,
+ion-toolbar {
+    --background: var(--ion-background-color);
+
+    --color: var(--ion-text-color);
+}
