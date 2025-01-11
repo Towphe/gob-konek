@@ -1,6 +1,10 @@
 import {
+  IonAccordion,
+  IonAccordionGroup,
   IonContent,
   IonHeader,
+  IonItem,
+  IonLabel,
   IonPage,
   IonTitle,
   IonToolbar,
@@ -273,91 +277,134 @@ const Info: React.FC = () => {
             <h1 className="text-4xl mb-2">{summary?.commonName}</h1>
             <p className="text-justify indent-4">{summary?.description}</p>
           </div>
-          <div className="w-[80vw] md:w-[55vw] lg:w-[40vw] xl:w-[25vw] 2xl:w-[20vw] mb-4">
-            {/* Careers */}
-            <h2 className="font-bold mb-1">Career</h2>
-            <div className="flex flex-col gap-3">
-              {summary?.careers.map((c) => (
-                <CareerComponent
-                  key={summary?.careers.indexOf(c)}
-                  title={c.title}
-                  duration={c.duration}
-                  description={c.description}
-                />
-              ))}
-            </div>
-          </div>
-          <div className="w-[80vw] md:w-[55vw] lg:w-[40vw] xl:w-[25vw] 2xl:w-[20vw] mb-4">
-            <h2 className="font-bold mb-1">Relatives in Politics</h2>
-            <div className="flex flex-col gap-3">
-              {summary?.dynasty.map((d) => (
-                <PoliticalDynastyComponent
-                  key={summary.dynasty.indexOf(d)}
-                  name={d.name}
-                  relation={d.relation}
-                  currentPosition={d.currentPosition}
-                />
-              ))}
-            </div>
-          </div>
-          <div className="w-[80vw] md:w-[55vw] lg:w-[40vw] xl:w-[25vw] 2xl:w-[20vw] mb-4">
+
+          <IonAccordionGroup className="w-[90vw] md:w-[55vw] lg:w-[40vw] xl:w-[25vw] 2xl:w-[20vw] ">
+            <IonAccordion
+              value="career"
+              className=" mb-4 bg-gray-700 bg-opacity-30 rounded-xl"
+            >
+              <IonItem slot="header">
+                <IonLabel>Career</IonLabel>
+              </IonItem>
+              <div className="w-full py-4" slot="content">
+                <div className="flex flex-col gap-3 px-3">
+                  {summary?.careers.map((c) => (
+                    <CareerComponent
+                      key={summary?.careers.indexOf(c)}
+                      title={c.title}
+                      duration={c.duration}
+                      description={c.description}
+                    />
+                  ))}
+                </div>
+              </div>
+            </IonAccordion>
+            <IonAccordion
+              value="dynasty"
+              className=" mb-4 bg-gray-700 bg-opacity-30 rounded-xl"
+            >
+              <IonItem slot="header">
+                <IonLabel>Relatives in Politics</IonLabel>
+              </IonItem>
+              <div className="w-full py-4" slot="content">
+                <div className="flex flex-col gap-3 px-3">
+                  {summary?.dynasty.map((d) => (
+                    <PoliticalDynastyComponent
+                      key={summary.dynasty.indexOf(d)}
+                      name={d.name}
+                      relation={d.relation}
+                      currentPosition={d.currentPosition}
+                    />
+                  ))}
+                </div>
+              </div>
+            </IonAccordion>
+            <IonAccordion
+              value="legislation"
+              className=" mb-4 bg-gray-700 bg-opacity-30 rounded-xl"
+            >
+              <IonItem slot="header">
+                <IonLabel>Legislations</IonLabel>
+              </IonItem>
+              <div className="w-full py-4" slot="content">
+                <div className="flex flex-col gap-3 px-3">
+                  {summary?.legislations.map((l) => (
+                    <LegislationComponent
+                      key={summary.legislations.indexOf(l)}
+                      title={l.title}
+                      status={l.status}
+                      description={l.description}
+                      dateFiled={l.dateFiled}
+                    />
+                  ))}
+                </div>
+              </div>
+            </IonAccordion>
+            <IonAccordion
+              value="projects"
+              className=" mb-4 bg-gray-700 bg-opacity-30 rounded-xl"
+            >
+              <IonItem slot="header">
+                <IonLabel>Projects</IonLabel>
+              </IonItem>
+              <div className="w-full py-4" slot="content">
+                <div className="flex flex-col gap-3 px-3">
+                  {summary?.projects.map((p) => (
+                    <ProjectComponent
+                      key={summary.projects.indexOf(p)}
+                      title={p.title}
+                      status={p.status}
+                      description={p.description}
+                      duration={p.duration}
+                    />
+                  ))}
+                </div>
+              </div>
+            </IonAccordion>
+            <IonAccordion
+              value="cases"
+              className=" mb-4 bg-gray-700 bg-opacity-30 rounded-xl"
+            >
+              <IonItem slot="header">
+                <IonLabel>Cases</IonLabel>
+              </IonItem>
+              <div className="w-full py-4" slot="content">
+                <div className="flex flex-col gap-3 px-3">
+                  {summary?.cases.map((c) => (
+                    <CaseComponent
+                      key={summary.cases.indexOf(c)}
+                      title={c.title}
+                      dateFiled={c.dateFiled}
+                      description={c.description}
+                      link={c.link}
+                    />
+                  ))}
+                </div>
+              </div>
+            </IonAccordion>
+            <IonAccordion
+              value="education"
+              className=" mb-4 bg-gray-700 bg-opacity-30 rounded-xl"
+            >
+              <IonItem slot="header">
+                <IonLabel>Education</IonLabel>
+              </IonItem>
+              <div className="w-full py-4" slot="content">
+                <div className="flex flex-col gap-3 px-3">
+                  {summary?.education.map((s) => (
+                    <EducationComponent
+                      key={summary.education.indexOf(s)}
+                      attained={s.attained}
+                      yearCompleted={s.yearCompleted}
+                      school={s.school}
+                    />
+                  ))}
+                </div>
+              </div>
+            </IonAccordion>
+          </IonAccordionGroup>
+          <div className=" mb-4 bg-gray-700 bg-opacity-30 rounded-xl">
             {/*  */}
-            <h2 className="font-bold mb-1">Legislations</h2>
-            <div className="flex flex-col gap-3">
-              {summary?.legislations.map((l) => (
-                <LegislationComponent
-                  key={summary.legislations.indexOf(l)}
-                  title={l.title}
-                  status={l.status}
-                  description={l.description}
-                  dateFiled={l.dateFiled}
-                />
-              ))}
-            </div>
-          </div>
-          <div className="w-[80vw] md:w-[55vw] lg:w-[40vw] xl:w-[25vw] 2xl:w-[20vw] mb-4">
-            {/*  */}
-            <h2 className="font-bold mb-1">Projects</h2>
-            <div className="flex flex-col gap-3">
-              {summary?.projects.map((p) => (
-                <ProjectComponent
-                  key={summary.projects.indexOf(p)}
-                  title={p.title}
-                  status={p.status}
-                  description={p.description}
-                  duration={p.duration}
-                />
-              ))}
-            </div>
-          </div>
-          <div className="w-[80vw] md:w-[55vw] lg:w-[40vw] xl:w-[25vw] 2xl:w-[20vw] mb-4">
-            {/*  */}
-            <h2 className="font-bold mb-1">Projects</h2>
-            <div className="flex flex-col gap-3">
-              {summary?.cases.map((c) => (
-                <CaseComponent
-                  key={summary.cases.indexOf(c)}
-                  title={c.title}
-                  dateFiled={c.dateFiled}
-                  description={c.description}
-                  link={c.link}
-                />
-              ))}
-            </div>
-          </div>
-          <div className="w-[80vw] md:w-[55vw] lg:w-[40vw] xl:w-[25vw] 2xl:w-[20vw] mb-4">
-            {/*  */}
-            <h2 className="font-bold mb-1">Projects</h2>
-            <div className="flex flex-col gap-3">
-              {summary?.education.map((s) => (
-                <EducationComponent
-                  key={summary.education.indexOf(s)}
-                  attained={s.attained}
-                  yearCompleted={s.yearCompleted}
-                  school={s.school}
-                />
-              ))}
-            </div>
           </div>
         </div>
       </IonContent>
