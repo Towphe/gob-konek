@@ -12,16 +12,19 @@ import {
 import ExploreContainer from "../components/ExploreContainer";
 import { useEffect, useState } from "react";
 import { Redirect } from "react-router";
+import { provinces, cities } from "../util/location";
 
 const Index: React.FC = () => {
   const [topSearches, setTopSearches] = useState<string[]>([]);
   const [search, setSearch] = useState<string | undefined>();
+  const [isGeolocationEnabled, toggleGeolocation] = useState<boolean>(false);
   const [selectedProvince, setSelectedProvince] = useState<
     string | undefined
   >();
-  const [isGeolocationEnabled, toggleGeolocation] = useState<boolean>(false);
   const [selectedMunicipalityOrCity, setSelectedMunicipalityOrProvince] =
     useState<string | undefined>();
+  const [selectedLanguage, setSelectedLanguage] = useState<string>("English");
+  const languageOptions: string[] = ["English", "Filipino", "Cebuano"];
 
   useEffect(() => {
     // fetch top searches
@@ -52,14 +55,24 @@ const Index: React.FC = () => {
     if (!isGeolocationEnabled) {
       if (selectedProvince) {
         // append province
-        searchQuery = searchQuery.concat(`&p=${selectedProvince}`);
+        const provinceName = provinces.filter(
+          (p) => p.key === selectedProvince,
+        )[0];
+        searchQuery = searchQuery.concat(`&p=${provinceName.name}`);
       }
 
       if (selectedMunicipalityOrCity) {
         // append municipality
-        searchQuery = searchQuery.concat(`&m=${selectedMunicipalityOrCity}`);
+        const municipalityName = cities.filter(
+          (c) =>
+            c.name === selectedMunicipalityOrCity &&
+            c.province === selectedProvince,
+        )[0].name;
+        searchQuery = searchQuery.concat(`&m=${municipalityName}`);
       }
     }
+
+    searchQuery = searchQuery.concat(`&l=${selectedLanguage}`);
 
     window.location.href = `info?${searchQuery}`;
   };
@@ -69,6 +82,16 @@ const Index: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonTitle>gob.konek</IonTitle>
+          <IonSelect
+            slot="end"
+            value={selectedLanguage}
+            className="text-xs"
+            interface="popover"
+          >
+            {languageOptions.map((l) => (
+              <IonSelectOption value={l}>{l}</IonSelectOption>
+            ))}
+          </IonSelect>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
@@ -88,11 +111,38 @@ const Index: React.FC = () => {
               />
               <div className="flex gap-6">
                 {/* filters */}
-                <IonSelect className="" label="Province" interface="popover">
-                  <IonSelectOption value="NCR" />
+                <IonSelect
+                  className="text-xs"
+                  label={selectedProvince !== undefined ? "" : "Province"}
+                  interface="popover"
+                  onIonChange={(event) => {
+                    setSelectedProvince(event.detail.value);
+                  }}
+                >
+                  {provinces.map((p) => (
+                    <IonSelectOption value={p.key}>{p.name}</IonSelectOption>
+                  ))}
                 </IonSelect>
-                <IonSelect label="Municipality" interface="popover">
-                  <IonSelectOption value="NCR" />
+                <IonSelect
+                  className="text-xs"
+                  label={selectedMunicipalityOrCity !== undefined ? "" : "City"}
+                  onIonChange={(event) => {
+                    setSelectedMunicipalityOrProvince(event.detail.value);
+                  }}
+                  interface="popover"
+                >
+                  {setSelectedProvince === undefined ? (
+                    <></>
+                  ) : (
+                    cities
+                      .filter((c) => c.province === selectedProvince)
+                      .map((c) => (
+                        <IonSelectOption value={c.city}>
+                          {c.name}
+                        </IonSelectOption>
+                      ))
+                  )}
+                  {/* <IonSelectOption value="NCR" /> */}
                 </IonSelect>
               </div>
             </div>
