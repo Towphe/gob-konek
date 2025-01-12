@@ -21,6 +21,26 @@ http://ionicframework.com/docs/theming/ */
 ion-header,
 ion-toolbar {
     --background: var(--ion-background-color);
-
     --color: var(--ion-text-color);
+}
+
+ion-tab-bar,
+ion-tab-button {
+    position: relative;
+    z-index: 100 !important;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    --background: var(--ion-background-color);
+}
+
+ion-icon {
+    --color: var(--ion-text-color);
+}
+
+.loading-wrapper {
+    --background: clear;
+    z-index: -50;
+}
+
+.accordion-header {
+    background-color: white;
 }

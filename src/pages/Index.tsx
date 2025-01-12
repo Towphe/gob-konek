@@ -14,6 +14,7 @@ import ExploreContainer from "../components/ExploreContainer";
 import { useEffect, useState } from "react";
 import { Redirect } from "react-router";
 import { provinces, cities } from "../util/location";
+import useDarkMode from "../hooks/DarkMode";
 
 interface Translation {
   English: string;
@@ -35,9 +36,7 @@ const Index: React.FC = () => {
   const [selectedLanguage, setSelectedLanguage] = useState<string>(
     localStorage.getItem("language") ?? "English",
   );
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(
-    localStorage.getItem("isDarkMode") === "false" ? false : true,
-  );
+  const { isDarkMode, setIsDarkMode } = useDarkMode();
   const languageOptions: string[] = [
     "English",
     "Filipino",
@@ -66,10 +65,6 @@ const Index: React.FC = () => {
     Waray: "Tan-awa",
     Hiligaynon: "Gapangita",
   };
-
-  useEffect(() => {
-    document.body.setAttribute("data-theme", !isDarkMode ? "dark" : "light");
-  }, [isDarkMode]);
 
   useEffect(() => {
     // fetch top searches
@@ -134,9 +129,7 @@ const Index: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar
-          className={isDarkMode === true ? "bg-[#F2F2F2]" : "bg-[#333333]"}
-        >
+        <IonToolbar>
           <IonToggle
             aria-label="Dark toggle"
             color="dark"
@@ -165,7 +158,7 @@ const Index: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <div className="h-full flex flex-col justify-center items-center">
+        <div className="bg-blue-901 h-full flex flex-col justify-center items-center">
           <form
             onSubmit={submitSearch}
             className="flex justify-between items-start w-[80vw] md:w-[55vw] lg:w-[40vw] xl:w-[25vw] 2xl:w-[20vw] mb-5"
@@ -176,7 +169,7 @@ const Index: React.FC = () => {
                 name="search"
                 type="text"
                 onChange={(e) => setSearch(e.target.value)}
-                className="bg-gray-500 bg-opacity-40 rounded-2xl text-md py-3 indent-4 w-full"
+                className="bg-white rounded-2xl text-md py-3 indent-4 w-full"
                 placeholder={enterTextTranslations[selectedLanguage]}
               />
               <div className="flex gap-4">
@@ -224,7 +217,7 @@ const Index: React.FC = () => {
             </div>
             <button
               type="submit"
-              className="bg-[#A14DB6] text-white py-3 px-4 rounded-xl w-[30%] "
+              className="bg-blue-903 text-white py-3 px-2 rounded-xl w-[30%] "
             >
               Search
             </button>
@@ -240,7 +233,7 @@ const Index: React.FC = () => {
                 return (
                   <div
                     key={topSearches.indexOf(s)}
-                    className="border-b-2 border-[#A14DB6] flex justify-between items-center mb-2 py-1.5 px-3 rounded-t-lg"
+                    className="border-b-2 border-blue-903 flex justify-between items-center mb-2 py-1.5 px-3 rounded-t-lg"
                   >
                     <p>
                       {topSearches.indexOf(s) + 1}. {s}
