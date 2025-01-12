@@ -30,6 +30,7 @@ import { ProjectComponent } from "../components/ProjectComponent";
 import { CaseComponent } from "../components/CaseComponent";
 import { EducationComponent } from "../components/EducationComponent";
 import { Translation } from "../models/Translation";
+import { LanguageGoogleEquivalent } from "../models/GLanguage";
 
 const Info: React.FC = () => {
   const [summary, setSummary] = useState<Summary>();
@@ -60,6 +61,12 @@ const Info: React.FC = () => {
     Hiligaynon: "Bumalik",
     Waray: "Bumalik",
   };
+  const languageMapping: LanguageGoogleEquivalent = {
+    English: "EN",
+    Filipino: "FIL",
+    Cebuano: "CEB",
+    Hiligaynon: "HIL",
+  };
 
   useIonViewWillEnter(() => {
     let searchQuery = `?name=${name}`;
@@ -82,17 +89,45 @@ const Info: React.FC = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        setSummary({
-          commonName: data.data.commonName,
-          legalName: data.data.legalName,
-          description: data.data.description.desc,
-          careers: data.data.careers.careers,
-          cases: data.data.cases.cases,
-          legislations: data.data.legislations.legislations,
-          projects: data.data.projects.projects,
-          education: data.data.education.education,
-        });
-        console.log(data);
+        if (selectedLanguage === "English") {
+          setSummary({
+            commonName: data.data.commonName,
+            legalName: data.data.legalName,
+            description: data.data.description.desc,
+            careers: data.data.careers.careers,
+            cases: data.data.cases.cases,
+            legislations: data.data.legislations.legislations,
+            projects: data.data.projects.projects,
+            education: data.data.education.education,
+          });
+          return;
+        }
+
+        fetch(`${apiUrl}/translate`, {
+          method: "POST",
+          headers: {
+            "ngrok-skip-browser-warning": 69420,
+            "Access-Control-Allow-Origin": "*",
+          },
+          body: JSON.stringify({
+            to_translate: data.data,
+            target_language: languageMapping[selectedLanguage],
+          }),
+        })
+          .then((res) => res.json())
+          .then((d) => {
+            setSummary({
+              commonName: d.data.commonName,
+              legalName: d.data.legalName,
+              description: d.data.description.desc,
+              careers: d.data.careers.careers,
+              cases: d.data.cases.cases,
+              legislations: d.data.legislations.legislations,
+              projects: d.data.projects.projects,
+              education: d.data.education.education,
+            });
+          })
+          .catch((err) => window.location.replace("/"));
       })
       .catch((err) => {
         // redirect back to main page

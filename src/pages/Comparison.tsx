@@ -416,7 +416,8 @@ const Comparison: React.FC = () => {
               projects: d.data[1].projects.projects,
               education: d.data[1].education.education,
             });
-          });
+          })
+          .catch((err) => window.location.replace("/"));
       })
       .catch((err) => {
         // redirect back to main page
