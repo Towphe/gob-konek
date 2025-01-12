@@ -330,7 +330,7 @@ const Comparison: React.FC = () => {
   }
 
   useIonViewWillEnter(() => {
-    const apiUrl = "https://2580-203-190-81-229.ngrok-free.app";
+    const apiUrl = "https://lean-tech-api.vercel.app";
     let searchQuery = `compare?name1=${name1}&name2=${name2}`;
 
     // console.log("Here");

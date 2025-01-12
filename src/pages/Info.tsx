@@ -135,8 +135,7 @@ const Info: React.FC = () => {
       });
   });
 
-  const apiUrl: string =
-    "https://2580-203-190-81-229.ngrok-free.app/retrieve/summary";
+  const apiUrl: string = "https://lean-tech-api.vercel.app/retrieve/summary";
 
   // useEffect(() => {
   //   toggleLoading(!isLoading);
