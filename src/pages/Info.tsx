@@ -12,6 +12,7 @@ import {
   IonTitle,
   IonToggle,
   IonToolbar,
+  useIonViewWillEnter,
 } from "@ionic/react";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -31,7 +32,7 @@ import { EducationComponent } from "../components/EducationComponent";
 import { Translation } from "../models/Translation";
 
 const Info: React.FC = () => {
-  const [summary, setSummary] = useState<Summary | undefined>();
+  const [summary, setSummary] = useState<Summary>();
   const [isDarkMode, setIsDarkMode] = useState<boolean>(
     localStorage.getItem("isDarkMode") === "false" ? false : true,
   );
@@ -60,150 +61,51 @@ const Info: React.FC = () => {
     Waray: "Bumalik",
   };
 
+  useIonViewWillEnter(() => {
+    let searchQuery = `?name=${name}`;
+
+    if (province) {
+      searchQuery = searchQuery.concat(`&province=${province}`);
+
+      if (city) {
+        searchQuery = searchQuery.concat(`&municipality=${city}`);
+      }
+    }
+
+    // console.log("Here");
+    fetch(apiUrl.concat(searchQuery), {
+      method: "GET",
+      headers: {
+        "ngrok-skip-browser-warning": 69420,
+        "Access-Control-Allow-Origin": "*",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setSummary({
+          commonName: data.data.commonName,
+          legalName: data.data.legalName,
+          description: data.data.description.desc,
+          careers: data.data.careers.careers,
+          cases: data.data.cases.cases,
+          legislations: data.data.legislations.legislations,
+          projects: data.data.projects.projects,
+          education: data.data.education.education,
+        });
+        console.log(data);
+      })
+      .catch((err) => {
+        // redirect back to main page
+        window.location.replace("/");
+      });
+  });
+
   const apiUrl: string =
-    "https://4df4-203-190-81-229.ngrok-free.app/retrieve/summary";
+    "https://2580-203-190-81-229.ngrok-free.app/retrieve/summary";
 
   // useEffect(() => {
-  //   document.body.setAttribute("data-theme", !isDarkMode ? "dark" : "light");
-  // }, [isDarkMode]);
-
-  useEffect(() => {
-    console.log([name, province, city, language]);
-
-    // fetch(apiUrl.concat(`?name=${name}`), {
-    //   method: "GET",
-    //   headers: {
-    //     "ngrok-skip-browser-warning": 69420,
-    //     "Access-Control-Allow-Origin": "*",
-    //   },
-    // })
-    //   .then((res) => res.json())
-    //   .then((data) => console.log(data))
-    //   .catch((err) => console.log(err));
-
-    // toggleLoading(!isLoading);
-
-    // if (!province) {
-    //   fetch(apiUrl.concat(`?name=${name}`), {
-    //     method: "GET",
-    //   })
-    //     .then((res) => res.json())
-    //     .then((data) => {
-    //       console.log(data);
-    //     });
-    // }
-
-    // retrieve from API
-    setSummary({
-      commonName: "Juan dela Cruz",
-      legalName: "Juan Carlos dela Cruz",
-      description:
-        "A prominent leader in local politics dedicated to community development and environmental sustainability.",
-      careers: [
-        {
-          title: "Mayor of San Isidro",
-          duration: "2016 - Present",
-          description:
-            "Elected to lead the city, focusing on economic growth and community initiatives.",
-          link: "www.example.com",
-        },
-        {
-          title: "City Councilor of San Isidro",
-          duration: "2010 - 2016",
-          description:
-            "Developed policies and legislation aimed at improving local infrastructure and public services.",
-          link: "www.example.com",
-        },
-      ],
-      dynasty: [
-        {
-          name: "Maria dela Cruz",
-          relation: "Mother",
-          currentPosition: "Former Governor of San Isidro",
-          link: "www.example.com",
-        },
-        {
-          name: "Jose dela Cruz",
-          relation: "Uncle",
-          currentPosition: "Former Senator",
-          link: "www.example.com",
-        },
-      ],
-      legislations: [
-        {
-          title: "San Isidro Urban Development Act",
-          status: "Passed",
-          description:
-            "Legislation aimed at enhancing urban infrastructure and housing projects in San Isidro.",
-          dateFiled: new Date("2022-03-15"),
-          link: "www.example.com",
-        },
-        {
-          title: "Public Health Improvement Bill",
-          status: "Pending",
-          description:
-            "A bill focused on increasing funding for healthcare facilities in the district.",
-          dateFiled: new Date("2023-01-10"),
-          link: "www.example.com",
-        },
-      ],
-      education: [
-        {
-          attained: "Bachelor's Degree",
-          school: "University of San Isidro",
-          yearCompleted: "2005-04-15",
-          link: "www.example.com",
-        },
-        {
-          attained: "High School Diploma",
-          school: "San Isidro High School",
-          yearCompleted: "2001-05-30",
-          link: "www.example.com",
-        },
-      ],
-      cases: [
-        {
-          title: "Corruption Allegations",
-
-          description:
-            "Investigation into alleged misuse of public funds during the mayoral campaign.",
-
-          dateFiled: "2022-05-01",
-
-          link: "https://example.com/cases/corruption-allegations",
-        },
-
-        {
-          title: "Environmental Violation Case",
-
-          description:
-            "Case filed against the city for failing to comply with environmental regulations.",
-
-          dateFiled: "2023-02-20",
-
-          link: "https://example.com/cases/environmental-violation",
-        },
-      ],
-      projects: [
-        {
-          title: "Community Clean-Up Initiative",
-          duration: "2021 - Present",
-          description:
-            "A project aimed at improving cleanliness and environmental awareness in San Isidro.",
-          status: "Ongoing",
-          link: "www.example.com",
-        },
-        {
-          title: "Youth Empowerment Program",
-          duration: "2018 - 2020",
-          description:
-            "A program designed to provide skills training and leadership opportunities for the youth in the community.",
-          status: "Completed",
-          link: "www.example.com",
-        },
-      ],
-    });
-  }, []);
+  //   toggleLoading(!isLoading);
+  // }, []);
 
   const toggleDarkMode = () => {
     if (isDarkMode) {
@@ -273,15 +175,19 @@ const Info: React.FC = () => {
               </IonItem>
               <div className="bg-white text-black w-full py-4" slot="content">
                 <div className="flex flex-col gap-3 px-3">
-                  {summary?.careers.map((c) => (
-                    <CareerComponent
-                      key={summary?.careers.indexOf(c)}
-                      title={c.title}
-                      duration={c.duration}
-                      description={c.description}
-                      link={c.link}
-                    />
-                  ))}
+                  {summary?.careers === undefined ? (
+                    <p>No career found.</p>
+                  ) : (
+                    summary?.careers.map((c) => (
+                      <CareerComponent
+                        key={summary?.careers.indexOf(c)}
+                        title={c.title}
+                        duration={c.duration}
+                        description={c.description}
+                        link={c.link}
+                      />
+                    ))
+                  )}
                 </div>
               </div>
             </IonAccordion>
@@ -294,15 +200,19 @@ const Info: React.FC = () => {
               </IonItem>
               <div className="bg-white text-black w-full py-4" slot="content">
                 <div className="flex flex-col gap-3 px-3">
-                  {summary?.dynasty.map((d) => (
-                    <PoliticalDynastyComponent
-                      key={summary.dynasty.indexOf(d)}
-                      name={d.name}
-                      relation={d.relation}
-                      currentPosition={d.currentPosition}
-                      link={d.link}
-                    />
-                  ))}
+                  {summary?.dynasty === undefined ? (
+                    <p>No relatives in politics found.</p>
+                  ) : (
+                    summary?.dynasty.map((d) => (
+                      <PoliticalDynastyComponent
+                        key={summary.dynasty.indexOf(d)}
+                        name={d.name}
+                        relation={d.relation}
+                        currentPosition={d.currentPosition}
+                        link={d.link}
+                      />
+                    ))
+                  )}
                 </div>
               </div>
             </IonAccordion>
@@ -315,16 +225,21 @@ const Info: React.FC = () => {
               </IonItem>
               <div className="bg-white text-black w-full py-4" slot="content">
                 <div className="flex flex-col gap-3 px-3">
-                  {summary?.legislations.map((l) => (
-                    <LegislationComponent
-                      key={summary.legislations.indexOf(l)}
-                      title={l.title}
-                      status={l.status}
-                      description={l.description}
-                      dateFiled={l.dateFiled}
-                      link={l.link}
-                    />
-                  ))}
+                  {summary?.legislations === undefined ||
+                  summary?.legislations.length === 0 ? (
+                    <p>No found legislation.</p>
+                  ) : (
+                    summary?.legislations.map((l) => (
+                      <LegislationComponent
+                        key={summary.legislations.indexOf(l)}
+                        title={l.title}
+                        status={l.status}
+                        description={l.description}
+                        dateFiled={l.dateFiled}
+                        link={l.link}
+                      />
+                    ))
+                  )}
                 </div>
               </div>
             </IonAccordion>
@@ -337,16 +252,21 @@ const Info: React.FC = () => {
               </IonItem>
               <div className="bg-white text-black w-full py-4" slot="content">
                 <div className="flex flex-col gap-3 px-3">
-                  {summary?.projects.map((p) => (
-                    <ProjectComponent
-                      key={summary.projects.indexOf(p)}
-                      title={p.title}
-                      status={p.status}
-                      description={p.description}
-                      duration={p.duration}
-                      link={p.link}
-                    />
-                  ))}
+                  {summary?.projects === undefined ||
+                  summary?.projects.length === 0 ? (
+                    <p>No found projects.</p>
+                  ) : (
+                    summary?.projects.map((p) => (
+                      <ProjectComponent
+                        key={summary.projects.indexOf(p)}
+                        title={p.title}
+                        status={p.status}
+                        description={p.description}
+                        duration={p.duration}
+                        link={p.link}
+                      />
+                    ))
+                  )}
                 </div>
               </div>
             </IonAccordion>
@@ -359,15 +279,20 @@ const Info: React.FC = () => {
               </IonItem>
               <div className="bg-white text-black w-full py-4" slot="content">
                 <div className="flex flex-col gap-3 px-3">
-                  {summary?.cases.map((c) => (
-                    <CaseComponent
-                      key={summary.cases.indexOf(c)}
-                      title={c.title}
-                      dateFiled={c.dateFiled}
-                      description={c.description}
-                      link={c.link}
-                    />
-                  ))}
+                  {summary?.cases === undefined ||
+                  summary?.cases.length === 0 ? (
+                    <p>No found cases.</p>
+                  ) : (
+                    summary?.cases.map((c) => (
+                      <CaseComponent
+                        key={summary.cases.indexOf(c)}
+                        title={c.title}
+                        dateFiled={c.dateFiled}
+                        description={c.description}
+                        link={c.link}
+                      />
+                    ))
+                  )}
                 </div>
               </div>
             </IonAccordion>
@@ -380,15 +305,20 @@ const Info: React.FC = () => {
               </IonItem>
               <div className="bg-white text-black w-full py-4" slot="content">
                 <div className="flex flex-col gap-3 px-3">
-                  {summary?.education.map((s) => (
-                    <EducationComponent
-                      key={summary.education.indexOf(s)}
-                      attained={s.attained}
-                      yearCompleted={s.yearCompleted}
-                      school={s.school}
-                      link={s.link}
-                    />
-                  ))}
+                  {summary?.education === undefined ||
+                  summary?.education.length === 0 ? (
+                    <p>No found education.</p>
+                  ) : (
+                    summary?.education.map((s) => (
+                      <EducationComponent
+                        key={summary.education.indexOf(s)}
+                        attained={s.attained}
+                        yearCompleted={s.yearCompleted}
+                        school={s.school}
+                        link={s.link}
+                      />
+                    ))
+                  )}
                 </div>
               </div>
             </IonAccordion>

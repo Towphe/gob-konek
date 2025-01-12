@@ -169,7 +169,7 @@ const Index: React.FC = () => {
                 name="search"
                 type="text"
                 onChange={(e) => setSearch(e.target.value)}
-                className="bg-white rounded-2xl text-md py-3 indent-4 w-full"
+                className="bg-white text-[#333333] rounded-2xl text-md py-3 indent-4 w-full"
                 placeholder={enterTextTranslations[selectedLanguage]}
               />
               <div className="flex gap-4">
