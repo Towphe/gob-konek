@@ -16,8 +16,9 @@ import {
   IonTitle,
   IonToggle,
   IonToolbar,
+  useIonViewWillEnter,
 } from "@ionic/react";
-import { arrowDown, arrowUp } from "ionicons/icons";
+import { arrowDown, arrowUp, search } from "ionicons/icons";
 import { useEffect, useState } from "react";
 import useDarkMode from "../hooks/DarkMode";
 import { Career } from "../models/Career";
@@ -35,6 +36,252 @@ import { LegislationComponent } from "../components/LegislationComponent";
 import { ProjectComponent } from "../components/ProjectComponent";
 import { CaseComponent } from "../components/CaseComponent";
 import { EducationComponent } from "../components/EducationComponent";
+import { LanguageGoogleEquivalent } from "../models/GLanguage";
+
+const ComparisonView: React.FC<comparisonParameter> = ({
+  summary1,
+  summary2,
+  criteria,
+}) => {
+  const apiUrl: string = "https://2580-203-190-81-229.ngrok-free.app/compare";
+
+  if (!summary1 || !summary2) {
+    window.location.replace("/");
+    return;
+  }
+
+  if (
+    [
+      "projects",
+      "education",
+      "legislations",
+      "dynasties",
+      "cases",
+      "careers",
+    ].indexOf(criteria.toLowerCase()) === -1
+  ) {
+    // not found
+    // redirect/return
+    return;
+  }
+
+  // match criteria
+
+  return (
+    <div className="flex flex-col justify-between items-start w-[80vw] md:w-[55vw] lg:w-[40vw] xl:w-[25vw] 2xl:w-[20vw]">
+      <div>
+        {/* Politician 1 */}
+        {/* common name, given name */}
+        <h2 className="text-2xl mb-2 font-semibold">{summary1.commonName}</h2>
+        <div className="flex flex-col gap-3">
+          {criteria !== "careers" ? (
+            <></>
+          ) : summary1.careers === undefined ||
+            summary1.careers.length === 0 ? (
+            <p>No careers found.</p>
+          ) : (
+            summary1.careers.map((c) => (
+              <CareerComponent
+                title={c.title}
+                duration={c.duration}
+                description={c.description}
+                link={c.link}
+              />
+            ))
+          )}
+          {criteria !== "dynasty" ? (
+            <></>
+          ) : summary1.dynasty === undefined ||
+            summary1.dynasty.length === 0 ? (
+            <p>No relatives in politics found.</p>
+          ) : (
+            summary1.dynasty.map((d) => (
+              <PoliticalDynastyComponent
+                name={d.title}
+                relation={d.relation}
+                currentPosition={d.currentPosition}
+                link={d.link}
+              />
+            ))
+          )}
+          {criteria !== "legislations" ? (
+            <></>
+          ) : summary1.legislations === undefined ||
+            summary1.legislations.length === 0 ? (
+            <p>No legislation found.</p>
+          ) : (
+            summary1.legislations.map((l) => (
+              <LegislationComponent
+                title={l.title}
+                status={l.status}
+                description={l.description}
+                dateFiled={l.dateFiled}
+                link={l.link}
+              />
+            ))
+          )}
+          {criteria !== "projects" ? (
+            <></>
+          ) : summary1.projects === undefined ||
+            summary1.projects.legnth === 0 ? (
+            <p>No projects found</p>
+          ) : (
+            summary1.projects.map((c) => (
+              <ProjectComponent
+                title={c.title}
+                duration={c.duration}
+                description={c.description}
+                status={c.status}
+                link={c.link}
+              />
+            ))
+          )}
+          {criteria !== "cases" ? (
+            <></>
+          ) : summary1.cases === undefined || summary1.cases.length === 0 ? (
+            <p>No cases found</p>
+          ) : (
+            summary1.cases.map((c) => (
+              <CaseComponent
+                title={c.title}
+                description={c.description}
+                dateFiled={c.dateFiled}
+                link={c.link}
+              />
+            ))
+          )}
+          {criteria !== "education" ? (
+            <></>
+          ) : summary1.education === undefined ||
+            summary1.education.length === 0 ? (
+            <p>No education found</p>
+          ) : (
+            summary1.education.map((e) => (
+              <EducationComponent
+                attained={e.attained}
+                school={e.school}
+                yearCompleted={e.yearCompleted}
+                link={e.link}
+              />
+            ))
+          )}
+        </div>
+      </div>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        className="size-8 mx-auto my-4"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"
+        />
+      </svg>
+      <div>
+        {/* Politician 2 */}
+        {/* common name, given name */}
+        <h2 className="text-2xl mb-2 font-semibold">{summary2.commonName}</h2>
+        <div className="flex flex-col gap-3">
+          {criteria !== "careers" ? (
+            <></>
+          ) : summary2.careers === undefined ||
+            summary2.careers.length === 0 ? (
+            <p>No careers found.</p>
+          ) : (
+            summary2.careers.map((c) => (
+              <CareerComponent
+                title={c.title}
+                duration={c.duration}
+                description={c.description}
+                link={c.link}
+              />
+            ))
+          )}
+          {criteria !== "dynasty" ? (
+            <></>
+          ) : summary2.dynasty === undefined ||
+            summary2.dynasty.length === 0 ? (
+            <p>No relatives in politics found.</p>
+          ) : (
+            summary2.dynasty.map((d) => (
+              <PoliticalDynastyComponent
+                name={d.title}
+                relation={d.relation}
+                currentPosition={d.currentPosition}
+                link={d.link}
+              />
+            ))
+          )}
+          {criteria !== "legislations" ? (
+            <></>
+          ) : summary2.legislations === undefined ||
+            summary2.legislations.length === 0 ? (
+            <p>No legislation found.</p>
+          ) : (
+            summary2.legislations.map((l) => (
+              <LegislationComponent
+                title={l.title}
+                status={l.status}
+                description={l.description}
+                dateFiled={l.dateFiled}
+                link={l.link}
+              />
+            ))
+          )}
+          {criteria !== "projects" ? (
+            <></>
+          ) : summary2.projects === undefined ||
+            summary2.projects.legnth === 0 ? (
+            <p>No projects found</p>
+          ) : (
+            summary2.projects.map((c) => (
+              <ProjectComponent
+                title={c.title}
+                duration={c.duration}
+                description={c.description}
+                status={c.status}
+                link={c.link}
+              />
+            ))
+          )}
+          {criteria !== "cases" ? (
+            <></>
+          ) : summary2.cases === undefined || summary2.cases.length === 0 ? (
+            <p>No cases found</p>
+          ) : (
+            summary2.cases.map((c) => (
+              <CaseComponent
+                title={c.title}
+                description={c.description}
+                dateFiled={c.dateFiled}
+                link={c.link}
+              />
+            ))
+          )}
+          {criteria !== "education" ? (
+            <></>
+          ) : summary2.education === undefined ||
+            summary2.education.length === 0 ? (
+            <p>No education found</p>
+          ) : (
+            summary2.education.map((e) => (
+              <EducationComponent
+                attained={e.attained}
+                school={e.school}
+                yearCompleted={e.yearCompleted}
+                link={e.link}
+              />
+            ))
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Comparison: React.FC = () => {
   const [selectedLanguage, setSelectedLanguage] = useState<string>(
@@ -51,10 +298,8 @@ const Comparison: React.FC = () => {
   const [selectedComparison, setSelectedComparison] = useState<
     string | undefined
   >(undefined);
-
   const [isComparisonOptionsToggled, toggleComparisonOptions] =
     useState<boolean>(false);
-
   const languageOptions: string[] = [
     "English",
     "Filipino",
@@ -62,6 +307,13 @@ const Comparison: React.FC = () => {
     "Waray",
     "Hiligaynon",
   ];
+
+  const languageMapping: LanguageGoogleEquivalent = {
+    English: "EN",
+    Filipino: "FIL",
+    Cebuano: "CEB",
+    Hiligaynon: "HIL",
+  };
 
   const backTranslation: Translation = {
     English: "Go Back",
@@ -77,439 +329,101 @@ const Comparison: React.FC = () => {
     criteria: string;
   }
 
-  const ComparisonView: React.FC<comparisonParameter> = ({
-    summary1,
-    summary2,
-    criteria,
-  }) => {
-    console.log("Hello");
-    if (!summary1 || !summary2) {
-      window.location.replace("/");
-      return;
-    }
+  useIonViewWillEnter(() => {
+    const apiUrl = "https://2580-203-190-81-229.ngrok-free.app";
+    let searchQuery = `compare?name1=${name1}&name2=${name2}`;
 
-    if (
-      [
-        "projects",
-        "education",
-        "legislations",
-        "dynasties",
-        "cases",
-        "careers",
-      ].indexOf(criteria.toLowerCase()) === -1
-    ) {
-      // not found
-      // redirect/return
-      return;
-    }
+    // console.log("Here");
+    fetch(apiUrl.concat(searchQuery), {
+      method: "GET",
+      headers: {
+        "ngrok-skip-browser-warning": 69420,
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (selectedLanguage === English) {
+          setSummary1({
+            commonName: data.data[0].commonName,
+            legalName: data.data[0].legalName,
+            description: data.data[0].description.desc,
+            careers: data.data[0].careers.careers,
+            cases: data.data[0].cases.cases,
+            legislations: data.data[0].legislations.legislations,
+            projects: data.data[0].projects.projects,
+            education: data.data[0].education.education,
+          });
+          setSummary2({
+            commonName: data.data[1].commonName,
+            legalName: data.data[1].legalName,
+            description: data.data[1].description.desc,
+            careers: data.data[1].careers.careers,
+            cases: data.data[1].cases.cases,
+            legislations: data.data[1].legislations.legislations,
+            projects: data.data[1].projects.projects,
+            education: data.data[1].education.education,
+          });
+          return;
+        }
 
-    // match criteria
+        fetch(`${apiUrl}/translate`, {
+          method: "POST",
+          headers: {
+            "ngrok-skip-browser-warning": 69420,
+            "Access-Control-Allow-Origin": "*",
+          },
+          body: JSON.stringify({
+            to_translate: data.data[0],
+            target_language: languageMapping[selectedLanguage],
+          }),
+        })
+          .then((res) => res.json())
+          .then((d) => {
+            setSummary1({
+              commonName: d.data[0].commonName,
+              legalName: d.data[0].legalName,
+              description: d.data[0].description.desc,
+              careers: d.data[0].careers.careers,
+              cases: d.data[0].cases.cases,
+              legislations: d.data[0].legislations.legislations,
+              projects: d.data[0].projects.projects,
+              education: d.data[0].education.education,
+            });
+          });
 
-    return (
-      <div className="flex flex-col justify-between items-start w-[80vw] md:w-[55vw] lg:w-[40vw] xl:w-[25vw] 2xl:w-[20vw]">
-        <div>
-          {/* Politician 1 */}
-          {/* common name, given name */}
-          <h2 className="text-2xl mb-2 font-semibold">{summary1.commonName}</h2>
-          <div className="flex flex-col gap-3">
-            {criteria !== "careers" ? (
-              <></>
-            ) : (
-              summary1.careers.map((c) => (
-                <CareerComponent
-                  title={c.title}
-                  duration={c.duration}
-                  description={c.description}
-                  link={c.link}
-                />
-              ))
-            )}
-            {criteria !== "careers" ? (
-              <></>
-            ) : (
-              summary1.dynasty.map((d) => (
-                <PoliticalDynastyComponent
-                  name={d.title}
-                  relation={d.relation}
-                  currentPosition={d.currentPosition}
-                  link={d.link}
-                />
-              ))
-            )}
-            {criteria !== "legislations" ? (
-              <></>
-            ) : (
-              summary1.legislations.map((l) => (
-                <LegislationComponent
-                  title={l.title}
-                  status={l.status}
-                  description={l.description}
-                  dateFiled={l.dateFiled}
-                  link={l.link}
-                />
-              ))
-            )}
-            {criteria !== "projects" ? (
-              <></>
-            ) : (
-              summary1.projects.map((c) => (
-                <ProjectComponent
-                  title={c.title}
-                  duration={c.duration}
-                  description={c.description}
-                  status={c.status}
-                  link={c.link}
-                />
-              ))
-            )}
-            {criteria !== "cases" ? (
-              <></>
-            ) : (
-              summary1.cases.map((c) => (
-                <CaseComponent
-                  title={c.title}
-                  description={c.description}
-                  dateFiled={c.dateFiled}
-                  link={c.link}
-                />
-              ))
-            )}
-            {criteria !== "education" ? (
-              <></>
-            ) : (
-              summary1.education.map((e) => (
-                <EducationComponent
-                  attained={e.attained}
-                  school={e.school}
-                  yearCompleted={e.yearCompleted}
-                  link={e.link}
-                />
-              ))
-            )}
-          </div>
-        </div>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          className="size-8 mx-auto my-4"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"
-          />
-        </svg>
-        <div>
-          {/* Politician 2 */}
-          {/* common name, given name */}
-          <h2 className="text-2xl mb-2 font-semibold">{summary2.commonName}</h2>
-          <div className="flex flex-col gap-3">
-            {criteria !== "careers" ? (
-              <></>
-            ) : (
-              summary2.careers.map((c) => (
-                <CareerComponent
-                  title={c.title}
-                  duration={c.duration}
-                  description={c.description}
-                  link={c.link}
-                />
-              ))
-            )}
-            {criteria !== "careers" ? (
-              <></>
-            ) : (
-              summary2.dynasty.map((d) => (
-                <PoliticalDynastyComponent
-                  name={d.title}
-                  relation={d.relation}
-                  currentPosition={d.currentPosition}
-                  link={d.link}
-                />
-              ))
-            )}
-            {criteria !== "legislations" ? (
-              <></>
-            ) : (
-              summary2.legislations.map((l) => (
-                <LegislationComponent
-                  title={l.title}
-                  status={l.status}
-                  description={l.description}
-                  dateFiled={l.dateFiled}
-                  link={l.link}
-                />
-              ))
-            )}
-            {criteria !== "projects" ? (
-              <></>
-            ) : (
-              summary2.projects.map((c) => (
-                <ProjectComponent
-                  title={c.title}
-                  duration={c.duration}
-                  description={c.description}
-                  status={c.status}
-                  link={c.link}
-                />
-              ))
-            )}
-            {criteria !== "cases" ? (
-              <></>
-            ) : (
-              summary2.cases.map((c) => (
-                <CaseComponent
-                  title={c.title}
-                  description={c.description}
-                  dateFiled={c.dateFiled}
-                  link={c.link}
-                />
-              ))
-            )}
-            {criteria !== "education" ? (
-              <></>
-            ) : (
-              summary2.education.map((e) => (
-                <EducationComponent
-                  attained={e.attained}
-                  school={e.school}
-                  yearCompleted={e.yearCompleted}
-                  link={e.link}
-                />
-              ))
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  useEffect(() => {
-    console.log([name1, name2]);
-
-    setSummary1({
-      commonName: "Juan dela Cruz",
-      legalName: "Juan Carlos dela Cruz",
-      description:
-        "A prominent leader in local politics dedicated to community development and environmental sustainability.",
-      careers: [
-        {
-          title: "Mayor of San Isidro",
-          duration: "2016 - Present",
-          description:
-            "Elected to lead the city, focusing on economic growth and community initiatives.",
-          link: "www.example.com",
-        },
-        {
-          title: "City Councilor of San Isidro",
-          duration: "2010 - 2016",
-          description:
-            "Developed policies and legislation aimed at improving local infrastructure and public services.",
-          link: "www.example.com",
-        },
-      ],
-      dynasty: [
-        {
-          name: "Maria dela Cruz",
-          relation: "Mother",
-          currentPosition: "Former Governor of San Isidro",
-          link: "www.example.com",
-        },
-        {
-          name: "Jose dela Cruz",
-          relation: "Uncle",
-          currentPosition: "Former Senator",
-          link: "www.example.com",
-        },
-      ],
-      legislations: [
-        {
-          title: "San Isidro Urban Development Act",
-          status: "Passed",
-          description:
-            "Legislation aimed at enhancing urban infrastructure and housing projects in San Isidro.",
-          dateFiled: new Date("2022-03-15"),
-          link: "www.example.com",
-        },
-        {
-          title: "Public Health Improvement Bill",
-          status: "Pending",
-          description:
-            "A bill focused on increasing funding for healthcare facilities in the district.",
-          dateFiled: new Date("2023-01-10"),
-          link: "www.example.com",
-        },
-      ],
-      education: [
-        {
-          attained: "Bachelor's Degree",
-          school: "University of San Isidro",
-          yearCompleted: "2005-04-15",
-          link: "www.example.com",
-        },
-        {
-          attained: "High School Diploma",
-          school: "San Isidro High School",
-          yearCompleted: "2001-05-30",
-          link: "www.example.com",
-        },
-      ],
-      cases: [
-        {
-          title: "Corruption Allegations",
-
-          description:
-            "Investigation into alleged misuse of public funds during the mayoral campaign.",
-
-          dateFiled: "2022-05-01",
-
-          link: "https://example.com/cases/corruption-allegations",
-        },
-
-        {
-          title: "Environmental Violation Case",
-
-          description:
-            "Case filed against the city for failing to comply with environmental regulations.",
-
-          dateFiled: "2023-02-20",
-
-          link: "https://example.com/cases/environmental-violation",
-        },
-      ],
-      projects: [
-        {
-          title: "Community Clean-Up Initiative",
-          duration: "2021 - Present",
-          description:
-            "A project aimed at improving cleanliness and environmental awareness in San Isidro.",
-          status: "Ongoing",
-          link: "www.example.com",
-        },
-        {
-          title: "Youth Empowerment Program",
-          duration: "2018 - 2020",
-          description:
-            "A program designed to provide skills training and leadership opportunities for the youth in the community.",
-          status: "Completed",
-          link: "www.example.com",
-        },
-      ],
-    });
-
-    setSummary2({
-      commonName: "Juan Perez",
-      legalName: "Juan Pedro Perez",
-      description:
-        "A prominent leader in local politics dedicated to community development and environmental sustainability.",
-      careers: [
-        {
-          title: "Mayor of San Isidro",
-          duration: "2016 - Present",
-          description:
-            "Elected to lead the city, focusing on economic growth and community initiatives.",
-          link: "www.example.com",
-        },
-        {
-          title: "City Councilor of San Isidro",
-          duration: "2010 - 2016",
-          description:
-            "Developed policies and legislation aimed at improving local infrastructure and public services.",
-          link: "www.example.com",
-        },
-      ],
-      dynasty: [
-        {
-          name: "Maria dela Cruz",
-          relation: "Mother",
-          currentPosition: "Former Governor of San Isidro",
-          link: "www.example.com",
-        },
-        {
-          name: "Jose dela Cruz",
-          relation: "Uncle",
-          currentPosition: "Former Senator",
-          link: "www.example.com",
-        },
-      ],
-      legislations: [
-        {
-          title: "San Isidro Urban Development Act",
-          status: "Passed",
-          description:
-            "Legislation aimed at enhancing urban infrastructure and housing projects in San Isidro.",
-          dateFiled: new Date("2022-03-15"),
-          link: "www.example.com",
-        },
-        {
-          title: "Public Health Improvement Bill",
-          status: "Pending",
-          description:
-            "A bill focused on increasing funding for healthcare facilities in the district.",
-          dateFiled: new Date("2023-01-10"),
-          link: "www.example.com",
-        },
-      ],
-      education: [
-        {
-          attained: "Bachelor's Degree",
-          school: "University of San Isidro",
-          yearCompleted: "2005-04-15",
-          link: "www.example.com",
-        },
-        {
-          attained: "High School Diploma",
-          school: "San Isidro High School",
-          yearCompleted: "2001-05-30",
-          link: "www.example.com",
-        },
-      ],
-      cases: [
-        {
-          title: "Corruption Allegations",
-
-          description:
-            "Investigation into alleged misuse of public funds during the mayoral campaign.",
-
-          dateFiled: "2022-05-01",
-
-          link: "https://example.com/cases/corruption-allegations",
-        },
-
-        {
-          title: "Environmental Violation Case",
-
-          description:
-            "Case filed against the city for failing to comply with environmental regulations.",
-
-          dateFiled: "2023-02-20",
-
-          link: "https://example.com/cases/environmental-violation",
-        },
-      ],
-      projects: [
-        {
-          title: "Community Clean-Up Initiative",
-          duration: "2021 - Present",
-          description:
-            "A project aimed at improving cleanliness and environmental awareness in San Isidro.",
-          status: "Ongoing",
-          link: "www.example.com",
-        },
-        {
-          title: "Youth Empowerment Program",
-          duration: "2018 - 2020",
-          description:
-            "A program designed to provide skills training and leadership opportunities for the youth in the community.",
-          status: "Completed",
-          link: "www.example.com",
-        },
-      ],
-    });
-  }, []);
+        fetch(`${apiUrl}/translate`, {
+          method: "POST",
+          headers: {
+            "ngrok-skip-browser-warning": 69420,
+            "Access-Control-Allow-Origin": "*",
+          },
+          body: JSON.stringify({
+            to_translate: data.data[1],
+            target_language: languageMapping[selectedLanguage],
+          }),
+        })
+          .then((res) => res.json())
+          .then((d) => {
+            setSummary2({
+              commonName: d.data[1].commonName,
+              legalName: d.data[1].legalName,
+              description: d.data[1].description.desc,
+              careers: d.data[1].careers.careers,
+              cases: d.data[1].cases.cases,
+              legislations: d.data[1].legislations.legislations,
+              projects: d.data[1].projects.projects,
+              education: d.data[1].education.education,
+            });
+          });
+      })
+      .catch((err) => {
+        // redirect back to main page
+        console.log(err);
+        // window.location.replace("/");
+      });
+  });
 
   return (
     <IonPage>
@@ -570,21 +484,28 @@ const Comparison: React.FC = () => {
               </IonItem>
               <div className="bg-white text-black w-full py-4" slot="content">
                 <div className="flex flex-col gap-3 px-3">
-                  {(selectedView === "person1"
-                    ? summary1
-                    : summary2
-                  )?.careers.map((c) => (
-                    <CareerComponent
-                      key={(selectedView === "person1"
-                        ? summary1
-                        : summary2
-                      )?.careers.indexOf(c)}
-                      title={c.title}
-                      duration={c.duration}
-                      description={c.description}
-                      link={c.link}
-                    />
-                  ))}
+                  {(selectedView === "person1" ? summary1 : summary2)
+                    ?.careers === undefined ||
+                  (selectedView === "person1" ? summary1 : summary2)?.careers
+                    .length === 0 ? (
+                    <p>No career found</p>
+                  ) : (
+                    (selectedView === "person1"
+                      ? summary1
+                      : summary2
+                    )?.careers.map((c) => (
+                      <CareerComponent
+                        key={(selectedView === "person1"
+                          ? summary1
+                          : summary2
+                        )?.careers.indexOf(c)}
+                        title={c.title}
+                        duration={c.duration}
+                        description={c.description}
+                        link={c.link}
+                      />
+                    ))
+                  )}
                 </div>
               </div>
             </IonAccordion>
@@ -597,21 +518,28 @@ const Comparison: React.FC = () => {
               </IonItem>
               <div className="bg-white text-black w-full py-4" slot="content">
                 <div className="flex flex-col gap-3 px-3">
-                  {(selectedView === "person1"
-                    ? summary1
-                    : summary2
-                  )?.dynasty.map((d) => (
-                    <PoliticalDynastyComponent
-                      key={(selectedView === "person1"
-                        ? summary1
-                        : summary2
-                      ).dynasty.indexOf(d)}
-                      name={d.name}
-                      relation={d.relation}
-                      currentPosition={d.currentPosition}
-                      link={d.link}
-                    />
-                  ))}
+                  {(selectedView === "person1" ? summary1 : summary2)
+                    ?.dynasty === undefined ||
+                  (selectedView === "person1" ? summary1 : summary2)?.dynasty
+                    .length === 0 ? (
+                    <p>No relative in politics</p>
+                  ) : (
+                    (selectedView === "person1"
+                      ? summary1
+                      : summary2
+                    )?.dynasty.map((d) => (
+                      <PoliticalDynastyComponent
+                        key={(selectedView === "person1"
+                          ? summary1
+                          : summary2
+                        ).dynasty.indexOf(d)}
+                        name={d.name}
+                        relation={d.relation}
+                        currentPosition={d.currentPosition}
+                        link={d.link}
+                      />
+                    ))
+                  )}
                 </div>
               </div>
             </IonAccordion>
@@ -624,22 +552,29 @@ const Comparison: React.FC = () => {
               </IonItem>
               <div className="bg-white text-black w-full py-4" slot="content">
                 <div className="flex flex-col gap-3 px-3">
-                  {(selectedView === "person1"
-                    ? summary1
-                    : summary2
-                  )?.legislations.map((l) => (
-                    <LegislationComponent
-                      key={(selectedView === "person1"
-                        ? summary1
-                        : summary2
-                      ).legislations.indexOf(l)}
-                      title={l.title}
-                      status={l.status}
-                      description={l.description}
-                      dateFiled={l.dateFiled}
-                      link={l.link}
-                    />
-                  ))}
+                  {(selectedView === "person1" ? summary1 : summary2)
+                    ?.legislations === undefined ||
+                  (selectedView === "person1" ? summary1 : summary2)
+                    ?.legislations.length === 0 ? (
+                    <p>No legislation found</p>
+                  ) : (
+                    (selectedView === "person1"
+                      ? summary1
+                      : summary2
+                    )?.legislations.map((l) => (
+                      <LegislationComponent
+                        key={(selectedView === "person1"
+                          ? summary1
+                          : summary2
+                        ).legislations.indexOf(l)}
+                        title={l.title}
+                        status={l.status}
+                        description={l.description}
+                        dateFiled={l.dateFiled}
+                        link={l.link}
+                      />
+                    ))
+                  )}
                 </div>
               </div>
             </IonAccordion>
@@ -652,22 +587,29 @@ const Comparison: React.FC = () => {
               </IonItem>
               <div className="bg-white text-black w-full py-4" slot="content">
                 <div className="flex flex-col gap-3 px-3">
-                  {(selectedView === "person1"
-                    ? summary1
-                    : summary2
-                  )?.projects.map((p) => (
-                    <ProjectComponent
-                      key={(selectedView === "person1"
-                        ? summary1
-                        : summary2
-                      ).projects.indexOf(p)}
-                      title={p.title}
-                      status={p.status}
-                      description={p.description}
-                      duration={p.duration}
-                      link={p.link}
-                    />
-                  ))}
+                  {(selectedView === "person1" ? summary1 : summary2)
+                    ?.projects === undefined ||
+                  (selectedView === "person1" ? summary1 : summary2)?.projects
+                    .length === 0 ? (
+                    <p>No projects found</p>
+                  ) : (
+                    (selectedView === "person1"
+                      ? summary1
+                      : summary2
+                    )?.projects.map((p) => (
+                      <ProjectComponent
+                        key={(selectedView === "person1"
+                          ? summary1
+                          : summary2
+                        ).projects.indexOf(p)}
+                        title={p.title}
+                        status={p.status}
+                        description={p.description}
+                        duration={p.duration}
+                        link={p.link}
+                      />
+                    ))
+                  )}
                 </div>
               </div>
             </IonAccordion>
@@ -680,21 +622,28 @@ const Comparison: React.FC = () => {
               </IonItem>
               <div className="bg-white text-black w-full py-4" slot="content">
                 <div className="flex flex-col gap-3 px-3">
-                  {(selectedView === "person1"
-                    ? summary1
-                    : summary2
-                  )?.cases.map((c) => (
-                    <CaseComponent
-                      key={(selectedView === "person1"
-                        ? summary1
-                        : summary2
-                      ).cases.indexOf(c)}
-                      title={c.title}
-                      dateFiled={c.dateFiled}
-                      description={c.description}
-                      link={c.link}
-                    />
-                  ))}
+                  {(selectedView === "person1" ? summary1 : summary2)?.cases ===
+                    undefined ||
+                  (selectedView === "person1" ? summary1 : summary2)?.cases
+                    .length === 0 ? (
+                    <p>No cases found</p>
+                  ) : (
+                    (selectedView === "person1"
+                      ? summary1
+                      : summary2
+                    )?.cases.map((c) => (
+                      <CaseComponent
+                        key={(selectedView === "person1"
+                          ? summary1
+                          : summary2
+                        ).cases.indexOf(c)}
+                        title={c.title}
+                        dateFiled={c.dateFiled}
+                        description={c.description}
+                        link={c.link}
+                      />
+                    ))
+                  )}
                 </div>
               </div>
             </IonAccordion>
@@ -707,21 +656,28 @@ const Comparison: React.FC = () => {
               </IonItem>
               <div className="bg-white text-black w-full py-4" slot="content">
                 <div className="flex flex-col gap-3 px-3">
-                  {(selectedView === "person1"
-                    ? summary1
-                    : summary2
-                  )?.education.map((s) => (
-                    <EducationComponent
-                      key={(selectedView === "person1"
-                        ? summary1
-                        : summary2
-                      ).education.indexOf(s)}
-                      attained={s.attained}
-                      yearCompleted={s.yearCompleted}
-                      school={s.school}
-                      link={s.link}
-                    />
-                  ))}
+                  {(selectedView === "person1" ? summary1 : summary2)
+                    ?.education === undefined ||
+                  (selectedView === "person1" ? summary1 : summary2)?.education
+                    .length === 0 ? (
+                    <p>No education found</p>
+                  ) : (
+                    (selectedView === "person1"
+                      ? summary1
+                      : summary2
+                    )?.education.map((s) => (
+                      <EducationComponent
+                        key={(selectedView === "person1"
+                          ? summary1
+                          : summary2
+                        ).education.indexOf(s)}
+                        attained={s.attained}
+                        yearCompleted={s.yearCompleted}
+                        school={s.school}
+                        link={s.link}
+                      />
+                    ))
+                  )}
                 </div>
               </div>
             </IonAccordion>
